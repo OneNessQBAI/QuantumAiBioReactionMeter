@@ -14,11 +14,18 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-# Initialize OpenAI client
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+# Initialize OpenAI client if API key is available
+api_key = os.getenv("OPENAI_API_KEY")
+client = OpenAI(api_key=api_key) if api_key else None
 
 def get_ai_analysis(data_dict):
     """Get AI analysis of the quantum bio-reaction data"""
+    if not client:
+        return """AI analysis is not available. To enable AI analysis:
+1. Create a .env file in the project root
+2. Add your OpenAI API key: OPENAI_API_KEY=your_key_here
+3. Restart the application"""
+        
     prompt = f"""Analyze this quantum bio-reaction data and provide detailed insights:
     Organism Type: {data_dict['organism_type']}
     Parameters: {data_dict['parameters']}
